@@ -1,0 +1,12 @@
+﻿namespace HospitalSystem.API.Models.DTO
+{
+    public class QualificationDto
+    {
+        public Guid Id { get; set; }
+        public Guid DoctorId { get; set; }
+        public string Degree { get; set; }
+        public string Institution { get; set; }
+        public int StudiedYears { get; set; }
+        public DateTime YearOfCompletion { get; set; }
+    }
+}
