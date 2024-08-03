@@ -14,10 +14,9 @@
         public Guid ContactId { get; set; }
         public Contact Contact { get; set; }
         public ICollection<DoctorSpecialization> DoctorSpecializations { get; set; } = new List<DoctorSpecialization>();
-
-        public ICollection<HospitalAffiliation> HospitalAffiliations { get; set; }
-        public ICollection<Qualification> Qualifications { get; set; }
-        public ICollection<Patient> Patients { get; set; }
-        public ICollection<Appointment> Appointments { get; set; }
+        public ICollection<HospitalAffiliation> HospitalAffiliations { get; set; } = new List<HospitalAffiliation>();
+        public ICollection<Qualification> Qualifications { get; set; } = new List<Qualification>();
+        public ICollection<Patient> Patients { get; set; } = new List<Patient>();
+        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     }
 }

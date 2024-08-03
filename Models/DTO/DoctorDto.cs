@@ -15,10 +15,11 @@ namespace HospitalSystem.API.Models.DTO
         public AddressDto Address { get; set; }
         public Guid ContactId { get; set; }
         public ContactDto Contact { get; set; }
-        public ICollection<Guid> SpecializationIds { get; set; } // Use ICollection<Guid> to return the IDs
-        public ICollection<HospitalAffiliation> HospitalAffiliations { get; set; }
-        public ICollection<Qualification> Qualifications { get; set; }
-        public ICollection<Patient> Patients { get; set; }
-        public ICollection<Appointment> Appointments { get; set; }
+        public ICollection<Guid> SpecializationIds { get; set; } 
+
+        public ICollection<Guid> HospitalAffiliationIds { get; set; }
+        public ICollection<Guid> QualificationIds { get; set; }
+        public ICollection<Guid> PatientIds { get; set; }
+        public ICollection<Guid> AppointmentIds { get; set; }
     }
 }
