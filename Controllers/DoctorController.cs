@@ -84,7 +84,8 @@ namespace HospitalSystem.API.Controllers
                 AddressId = doctor.AddressId,
                 ContactId = doctor.ContactId,                
                 SpecializationIds = doctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
-                QualificationIds = doctor.Qualifications.Select(ds => ds.Id).ToList()
+                QualificationIds = doctor.Qualifications.Select(q => q.Id).ToList(),
+                AppointmentIds = doctor.Appointments.Select(a => a.Id).ToList()
                 
             }).ToList();
 

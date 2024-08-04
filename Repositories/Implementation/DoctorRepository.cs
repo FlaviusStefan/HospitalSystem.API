@@ -21,6 +21,8 @@ namespace HospitalSystem.API.Repositories.Implementation
                 .Include(d => d.Contact)
                 .Include(d => d.DoctorSpecializations)
                 .Include(d => d.Qualifications)
+                .Include(d => d.Appointments)
+
                 .ToListAsync();
 
         }
@@ -30,8 +32,9 @@ namespace HospitalSystem.API.Repositories.Implementation
             return await dbContext.Doctors
                 .Include(d => d.Address)
                 .Include(d => d.Contact)
-                .Include(d => d.Qualifications)
                 .Include(d => d.DoctorSpecializations)
+                .Include(d => d.Qualifications)
+                .Include(d => d.Appointments)
 
                 .FirstOrDefaultAsync(x => x.Id == id);
         }

@@ -17,10 +17,11 @@ namespace HospitalSystem.API.Models.DTO
         //public ContactDto Contact { get; set; }
         public ICollection<Guid> SpecializationIds { get; set; }
         public ICollection<Guid> QualificationIds { get; set; }
+        public ICollection<Guid> AppointmentIds { get; set; }
+
 
         //public ICollection<QualificationDto> Qualifications { get; set; }
         public ICollection<Guid> HospitalAffiliationIds { get; set; }
         public ICollection<Guid> PatientIds { get; set; }
-        public ICollection<Guid> AppointmentIds { get; set; }
     }
 }
