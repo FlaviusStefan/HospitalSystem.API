@@ -17,9 +17,10 @@ namespace HospitalSystem.API.Repositories.Implementation
         public async Task<IEnumerable<Doctor>> GetAllAsync()
         {
             return await dbContext.Doctors
-                .Include(d => d.DoctorSpecializations)
                 .Include(d => d.Address) 
-                .Include(d => d.Contact) 
+                .Include(d => d.Contact)
+                .Include(d => d.DoctorSpecializations)
+                .Include(d => d.Qualifications)
                 .ToListAsync();
 
         }
@@ -27,9 +28,11 @@ namespace HospitalSystem.API.Repositories.Implementation
         public async Task<Doctor?> GetById(Guid id)
         {
             return await dbContext.Doctors
-                .Include(d => d.DoctorSpecializations)
                 .Include(d => d.Address)
                 .Include(d => d.Contact)
+                .Include(d => d.Qualifications)
+                .Include(d => d.DoctorSpecializations)
+
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 

@@ -3,6 +3,7 @@ using HospitalSystem.API.Models.DTO;
 using HospitalSystem.API.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Numerics;
 
 namespace HospitalSystem.API.Controllers
 {
@@ -81,24 +82,10 @@ namespace HospitalSystem.API.Controllers
                 LicenseNumber = doctor.LicenseNumber,
                 YearsOfExperience = doctor.YearsOfExperience,
                 AddressId = doctor.AddressId,
-                ContactId = doctor.ContactId,
-                Address = new AddressDto
-                {
-                    Id = doctor.Address.Id,
-                    Street = doctor.Address.Street,
-                    StreetNr = doctor.Address.StreetNr,
-                    City = doctor.Address.City,
-                    State = doctor.Address.State,
-                    Country = doctor.Address.Country,
-                    PostalCode = doctor.Address.PostalCode
-                },
-                Contact = new ContactDto
-                {
-                    Id = doctor.ContactId,
-                    Phone = doctor.Contact.Phone,
-                    Email = doctor.Contact.Email,
-                },
-                SpecializationIds = doctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList()
+                ContactId = doctor.ContactId,                
+                SpecializationIds = doctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
+                QualificationIds = doctor.Qualifications.Select(ds => ds.Id).ToList()
+                
             }).ToList();
 
             return Ok(response);
@@ -125,26 +112,10 @@ namespace HospitalSystem.API.Controllers
                 LicenseNumber = existingDoctor.LicenseNumber,
                 YearsOfExperience = existingDoctor.YearsOfExperience,
                 AddressId = existingDoctor.AddressId,
-                ContactId = existingDoctor.ContactId,
-                Address = new AddressDto
-                {
-                    Id = existingDoctor.Address.Id,
-                    Street = existingDoctor.Address.Street,
-                    StreetNr = existingDoctor.Address.StreetNr,
-                    City = existingDoctor.Address.City,
-                    State = existingDoctor.Address.State,
-                    Country = existingDoctor.Address.Country,
-                    PostalCode = existingDoctor.Address.PostalCode
-                },
-                Contact = new ContactDto
-                {
-                    Id = existingDoctor.Contact.Id,
-                    Phone = existingDoctor.Contact.Phone,
-                    Email = existingDoctor.Contact.Email,
-                },
+                ContactId = existingDoctor.ContactId,                
                 SpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
-                HospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
-                QualificationIds = existingDoctor.Qualifications.Select(q => q.Id).ToList(),
+                QualificationIds = existingDoctor.Qualifications.Select(ds => ds.Id).ToList(),
+                HospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),                
                 PatientIds = existingDoctor.Patients.Select(p => p.Id).ToList(),
                 AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList()
             };
@@ -200,6 +171,39 @@ namespace HospitalSystem.API.Controllers
                     });
                 }
             }
+
+            //// Update Qualifications
+            //var existingQualificationIds = existingDoctor.Qualifications.Select(q => q.Id).ToList();
+            //var newQualificationIds = request.QualificationIds ?? new List<Guid>();
+
+            //// Remove qualifications that are no longer in the request
+            //foreach (var existingQualificationId in existingQualificationIds)
+            //{
+            //    if (!newQualificationIds.Contains(existingQualificationId))
+            //    {
+            //        var qualificationToRemove = existingDoctor.Qualifications
+            //            .FirstOrDefault(q => q.Id == existingQualificationId);
+            //        if (qualificationToRemove != null)
+            //        {
+            //            existingDoctor.Qualifications.Remove(qualificationToRemove);
+            //        }
+            //    }
+            //}
+
+            //// Add new qualifications
+            //foreach (var qualificationId in newQualificationIds)
+            //{
+            //    if (!existingQualificationIds.Contains(qualificationId))
+            //    {
+            //        // Assuming GetQualificationById is a method in the repository
+            //        var qualification = await doctorRepository.GetQualificationByIdAsync(qualificationId);
+
+            //        if (qualification != null)
+            //        {
+            //            existingDoctor.Qualifications.Add(qualification);
+            //        }
+            //    }
+            //}
 
             // Update the doctor in the repository
             await doctorRepository.UpdateAsync(existingDoctor);
