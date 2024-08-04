@@ -85,8 +85,10 @@ namespace HospitalSystem.API.Controllers
                 ContactId = doctor.ContactId,                
                 SpecializationIds = doctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = doctor.Qualifications.Select(q => q.Id).ToList(),
-                AppointmentIds = doctor.Appointments.Select(a => a.Id).ToList()
-                
+                HospitalAffiliationIds = doctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
+                AppointmentIds = doctor.Appointments.Select(a => a.Id).ToList(),
+                PatientIds = doctor.Patients.Select(p => p.Id).ToList()
+
             }).ToList();
 
             return Ok(response);
@@ -117,8 +119,9 @@ namespace HospitalSystem.API.Controllers
                 SpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = existingDoctor.Qualifications.Select(ds => ds.Id).ToList(),
                 HospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),                
-                PatientIds = existingDoctor.Patients.Select(p => p.Id).ToList(),
-                AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList()
+                AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList(),
+                PatientIds = existingDoctor.Patients.Select(p => p.Id).ToList()
+
             };
 
             return Ok(response);

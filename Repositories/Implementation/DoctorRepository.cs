@@ -21,8 +21,9 @@ namespace HospitalSystem.API.Repositories.Implementation
                 .Include(d => d.Contact)
                 .Include(d => d.DoctorSpecializations)
                 .Include(d => d.Qualifications)
+                .Include(d => d.HospitalAffiliations)
                 .Include(d => d.Appointments)
-
+                .Include(d => d.Patients)
                 .ToListAsync();
 
         }
@@ -34,8 +35,9 @@ namespace HospitalSystem.API.Repositories.Implementation
                 .Include(d => d.Contact)
                 .Include(d => d.DoctorSpecializations)
                 .Include(d => d.Qualifications)
+                .Include(d => d.HospitalAffiliations)
                 .Include(d => d.Appointments)
-
+                .Include(d => d.Patients)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
