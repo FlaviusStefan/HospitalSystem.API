@@ -145,7 +145,7 @@ namespace HospitalSystem.API.Controllers
                 SpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 HospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
                 QualificationIds = existingDoctor.Qualifications.Select(q => q.Id).ToList(),
-                PatientIds= existingDoctor.Patients.Select(p => p.Id).ToList(),
+                PatientIds = existingDoctor.Patients.Select(p => p.Id).ToList(),
                 AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList()
             };
 
@@ -156,59 +156,63 @@ namespace HospitalSystem.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> UpdateDoctor([FromRoute] Guid id, UpdateDoctorRequestDto request)
         {
-            var doctor = new Doctor
-            {
-                Id = id,
-                LicenseNumber = request.LicenseNumber,
-                YearsOfExperience = request.YearsOfExperience,
-                AddressId = request.AddressId,
-                ContactId = request.ContactId,
-                Qualifications = request.QualificationIds?.Select(qualificationId => new Qualification
-                {
-                    Id = qualificationId,
-                    DoctorId = id,
-                }).ToList(),
+            // Retrieve the existing doctor from the repository
+            var existingDoctor = await doctorRepository.GetById(id);
 
-                Appointments = request.AppointmentIds?.Select(appointmentId => new Appointment
-                {
-                    Id = appointmentId,
-                    DoctorId = id,
-                }).ToList(),
-
-                Patients = request.PatientIds?.Select(patientId => new Patient
-                {
-                    Id = patientId,
-                    PrimaryCarePhysicianId = id,
-                }).ToList(),
-
-                HospitalAffiliations = request.HospitalAffiliationIds?.Select(hospitalAffiliationId => new HospitalAffiliation
-                {
-                    Id = hospitalAffiliationId,
-                    DoctorId = id,
-                    HospitalId = hospitalAffiliationId
-                }).ToList(),
-
-            };
-
-            doctor = await doctorRepository.UpdateAsync(doctor);
-
-            if (doctor == null)
+            if (existingDoctor == null)
             {
                 return NotFound();
             }
 
+            // Update the simple properties
+            existingDoctor.LicenseNumber = request.LicenseNumber;
+            existingDoctor.YearsOfExperience = request.YearsOfExperience;
+            existingDoctor.AddressId = request.AddressId;
+            existingDoctor.ContactId = request.ContactId;
+
+            // Update specializations
+            var existingSpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList();
+            var newSpecializationIds = request.SpecializationIds ?? new List<Guid>();
+
+            // Remove specializations that are no longer in the request
+            foreach (var specializationId in existingSpecializationIds)
+            {
+                if (!newSpecializationIds.Contains(specializationId))
+                {
+                    var specializationToRemove = existingDoctor.DoctorSpecializations
+                        .FirstOrDefault(ds => ds.SpecializationId == specializationId);
+                    if (specializationToRemove != null)
+                    {
+                        existingDoctor.DoctorSpecializations.Remove(specializationToRemove);
+                    }
+                }
+            }
+
+            // Add new specializations from the request
+            foreach (var specializationId in newSpecializationIds)
+            {
+                if (!existingSpecializationIds.Contains(specializationId))
+                {
+                    existingDoctor.DoctorSpecializations.Add(new DoctorSpecialization
+                    {
+                        DoctorId = id,
+                        SpecializationId = specializationId
+                    });
+                }
+            }
+
+            // Update the doctor in the repository
+            await doctorRepository.UpdateAsync(existingDoctor);
+
+            // Create the response DTO
             var response = new DoctorDto
             {
-                Id = doctor.Id,
-                LicenseNumber = doctor.LicenseNumber,
-                YearsOfExperience = doctor.YearsOfExperience,
-                AddressId = doctor.AddressId,
-                ContactId = doctor.ContactId,
-                SpecializationIds = doctor.DoctorSpecializations?.Select(ds => ds.SpecializationId).ToList() ?? new List<Guid>(),
-                HospitalAffiliationIds = doctor.HospitalAffiliations?.Select(ha => ha.HospitalId).ToList() ?? new List<Guid>(),
-                QualificationIds = doctor.Qualifications?.Select(q => q.Id).ToList() ?? new List<Guid>(),
-                PatientIds = doctor.Patients?.Select(p => p.Id).ToList() ?? new List<Guid>(),
-                AppointmentIds = doctor.Appointments?.Select(a => a.Id).ToList() ?? new List<Guid>()
+                Id = existingDoctor.Id,
+                LicenseNumber = existingDoctor.LicenseNumber,
+                YearsOfExperience = existingDoctor.YearsOfExperience,
+                AddressId = existingDoctor.AddressId,
+                ContactId = existingDoctor.ContactId,
+                SpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList()
             };
 
             return Ok(response);
