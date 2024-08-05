@@ -20,12 +20,7 @@ namespace HospitalSystem.API.Repositories.Implementation
             await dbContext.SaveChangesAsync();
 
             return qualification;
-        }
-
-        public async Task<Qualification?> DeleteAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+        }    
 
         public async Task<IEnumerable<Qualification>> GetAllAsync()
         {
@@ -43,7 +38,44 @@ namespace HospitalSystem.API.Repositories.Implementation
 
         public async Task<Qualification?> UpdateAsync(Qualification qualification)
         {
-            throw new NotImplementedException();
+            var existingQualification = await dbContext.Qualifications.FirstOrDefaultAsync(x => x.Id == qualification.Id);
+
+            if (existingQualification != null)
+            {
+                // Verify the DoctorId exists in the Doctors table
+                var doctorExists = await dbContext.Doctors.AnyAsync(d => d.Id == qualification.DoctorId);
+                if (!doctorExists)
+                {
+                    throw new InvalidOperationException($"Doctor with Id {qualification.DoctorId} does not exist.");
+                }
+
+                // Update properties
+                existingQualification.Degree = qualification.Degree;
+                existingQualification.Institution = qualification.Institution;
+                existingQualification.DoctorId = qualification.DoctorId; // Ensure this is valid
+
+                await dbContext.SaveChangesAsync();
+                return existingQualification;
+            }
+
+            return null;
         }
+
+        public async Task<Qualification?> DeleteAsync(Guid id)
+        {
+            var existingQualification = await dbContext.Qualifications.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (existingQualification is null)
+            {
+                return null;
+            }
+
+            dbContext.Qualifications.Remove(existingQualification);
+            await dbContext.SaveChangesAsync();
+            return existingQualification;
+        }
+
+
+
     }
 }

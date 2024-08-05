@@ -14,6 +14,14 @@ namespace HospitalSystem.API.Repositories.Implementation
             this.dbContext = dbContext;
         }
 
+        public async Task<Doctor> CreateAsync(Doctor doctor)
+        {
+            await dbContext.Doctors.AddAsync(doctor);
+            await dbContext.SaveChangesAsync();
+
+            return doctor;
+        }       
+
         public async Task<IEnumerable<Doctor>> GetAllAsync()
         {
             return await dbContext.Doctors
@@ -41,14 +49,7 @@ namespace HospitalSystem.API.Repositories.Implementation
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<Doctor> CreateAsync(Doctor doctor)
-        {
-            await dbContext.Doctors.AddAsync(doctor);
-            await dbContext.SaveChangesAsync();
-
-            return doctor;
-        }
-
+        
         public async Task<Doctor?> UpdateAsync(Doctor doctor)
         {
             var existingDoctor = await dbContext.Doctors.FirstOrDefaultAsync(x => x.Id == doctor.Id);
@@ -75,8 +76,9 @@ namespace HospitalSystem.API.Repositories.Implementation
             dbContext.Doctors.Remove(existingDoctor);
             await dbContext.SaveChangesAsync();
             return existingDoctor;
-        }       
+        }
 
-        
+
+
     }
 }
