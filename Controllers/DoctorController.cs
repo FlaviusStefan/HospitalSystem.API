@@ -139,6 +139,7 @@ namespace HospitalSystem.API.Controllers
                 return NotFound();
             }
 
+
             // Update the simple properties
             existingDoctor.LicenseNumber = request.LicenseNumber;
             existingDoctor.YearsOfExperience = request.YearsOfExperience;
@@ -176,38 +177,125 @@ namespace HospitalSystem.API.Controllers
                 }
             }
 
-            //// Update Qualifications
-            //var existingQualificationIds = existingDoctor.Qualifications.Select(q => q.Id).ToList();
-            //var newQualificationIds = request.QualificationIds ?? new List<Guid>();
+            // Update qualifications
+            var existingQualificationIds = existingDoctor.Qualifications.Select(q => q.Id).ToList();
+            var newQualificationIds = request.QualificationIds ?? new List<Guid>();
 
-            //// Remove qualifications that are no longer in the request
-            //foreach (var existingQualificationId in existingQualificationIds)
-            //{
-            //    if (!newQualificationIds.Contains(existingQualificationId))
-            //    {
-            //        var qualificationToRemove = existingDoctor.Qualifications
-            //            .FirstOrDefault(q => q.Id == existingQualificationId);
-            //        if (qualificationToRemove != null)
-            //        {
-            //            existingDoctor.Qualifications.Remove(qualificationToRemove);
-            //        }
-            //    }
-            //}
+            // Remove qualifications that are no longer in the request
+            foreach (var existingQualificationId in existingQualificationIds)
+            {
+                if (!newQualificationIds.Contains(existingQualificationId))
+                {
+                    var qualificationToRemove = existingDoctor.Qualifications
+                        .FirstOrDefault(q => q.Id == existingQualificationId);
+                    if (qualificationToRemove != null)
+                    {
+                        existingDoctor.Qualifications.Remove(qualificationToRemove);
+                    }
+                }
+            }
 
-            //// Add new qualifications
-            //foreach (var qualificationId in newQualificationIds)
-            //{
-            //    if (!existingQualificationIds.Contains(qualificationId))
-            //    {
-            //        // Assuming GetQualificationById is a method in the repository
-            //        var qualification = await doctorRepository.GetQualificationByIdAsync(qualificationId);
+            // Add new qualifications
+            foreach (var qualificationId in newQualificationIds)
+            {
+                if (!existingQualificationIds.Contains(qualificationId))
+                {
+                    existingDoctor.Qualifications.Add(new Qualification
+                    {
+                        Id = qualificationId
+                    });
+                }
+            }
 
-            //        if (qualification != null)
-            //        {
-            //            existingDoctor.Qualifications.Add(qualification);
-            //        }
-            //    }
-            //}
+            // Update hospital affiliations
+            var existingHospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList();
+            var newHospitalAffiliationIds = request.HospitalAffiliationIds ?? new List<Guid>();
+
+            // Remove hospital affiliations that are no longer in the request
+            foreach (var existingHospitalAffiliationId in existingHospitalAffiliationIds)
+            {
+                if (!newHospitalAffiliationIds.Contains(existingHospitalAffiliationId))
+                {
+                    var hospitalAffiliationToRemove = existingDoctor.HospitalAffiliations
+                        .FirstOrDefault(ha => ha.Id == existingHospitalAffiliationId);
+                    if (hospitalAffiliationToRemove != null)
+                    {
+                        existingDoctor.HospitalAffiliations.Remove(hospitalAffiliationToRemove);
+                    }
+                }
+            }
+
+            // Add new hospital affiliations
+            foreach (var hospitalAffiliationId in newHospitalAffiliationIds)
+            {
+                if (!existingHospitalAffiliationIds.Contains(hospitalAffiliationId))
+                {
+                    existingDoctor.HospitalAffiliations.Add(new HospitalAffiliation
+                    {
+                        Id = hospitalAffiliationId
+                    });
+                }
+            }
+
+            // Update appointments
+            var existingAppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList();
+            var newAppointmentIds = request.AppointmentIds ?? new List<Guid>();
+
+            // Remove appointments that are no longer in the request
+            foreach (var existingAppointmentId in existingAppointmentIds)
+            {
+                if (!newAppointmentIds.Contains(existingAppointmentId))
+                {
+                    var appointmentToRemove = existingDoctor.Appointments
+                        .FirstOrDefault(a => a.Id == existingAppointmentId);
+                    if (appointmentToRemove != null)
+                    {
+                        existingDoctor.Appointments.Remove(appointmentToRemove);
+                    }
+                }
+            }
+
+            // Add new appointments
+            foreach (var appointmentId in newAppointmentIds)
+            {
+                if (!existingAppointmentIds.Contains(appointmentId))
+                {
+                    existingDoctor.Appointments.Add(new Appointment
+                    {
+                        Id = appointmentId
+                    });
+                }
+            }
+
+            // Update patients
+            var existingPatientIds = existingDoctor.Patients.Select(p => p.Id).ToList();
+            var newPatientIds = request.PatientIds ?? new List<Guid>();
+
+            // Remove patients that are no longer in the request
+            foreach (var existingPatientId in existingPatientIds)
+            {
+                if (!newPatientIds.Contains(existingPatientId))
+                {
+                    var patientToRemove = existingDoctor.Patients
+                        .FirstOrDefault(p => p.Id == existingPatientId);
+                    if (patientToRemove != null)
+                    {
+                        existingDoctor.Patients.Remove(patientToRemove);
+                    }
+                }
+            }
+
+            // Add new patients
+            foreach (var patientId in newPatientIds)
+            {
+                if (!existingPatientIds.Contains(patientId))
+                {
+                    existingDoctor.Patients.Add(new Patient
+                    {
+                        Id = patientId
+                    });
+                }
+            }
 
             // Update the doctor in the repository
             await doctorRepository.UpdateAsync(existingDoctor);
@@ -220,7 +308,11 @@ namespace HospitalSystem.API.Controllers
                 YearsOfExperience = existingDoctor.YearsOfExperience,
                 AddressId = existingDoctor.AddressId,
                 ContactId = existingDoctor.ContactId,
-                SpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList()
+                SpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
+                QualificationIds = existingDoctor.Qualifications.Select(q => q.Id).ToList(),
+                HospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
+                AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList(),
+                PatientIds = existingDoctor.Patients.Select(p => p.Id).ToList()
             };
 
             return Ok(response);
