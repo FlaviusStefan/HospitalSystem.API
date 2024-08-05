@@ -75,9 +75,7 @@ namespace HospitalSystem.API.Repositories.Implementation
             dbContext.Doctors.Remove(existingDoctor);
             await dbContext.SaveChangesAsync();
             return existingDoctor;
-        }
-
-        
+        }       
 
         
     }

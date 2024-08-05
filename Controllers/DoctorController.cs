@@ -82,7 +82,7 @@ namespace HospitalSystem.API.Controllers
                 LicenseNumber = doctor.LicenseNumber,
                 YearsOfExperience = doctor.YearsOfExperience,
                 AddressId = doctor.AddressId,
-                ContactId = doctor.ContactId,                
+                ContactId = doctor.ContactId,
                 SpecializationIds = doctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = doctor.Qualifications.Select(q => q.Id).ToList(),
                 HospitalAffiliationIds = doctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
@@ -115,10 +115,10 @@ namespace HospitalSystem.API.Controllers
                 LicenseNumber = existingDoctor.LicenseNumber,
                 YearsOfExperience = existingDoctor.YearsOfExperience,
                 AddressId = existingDoctor.AddressId,
-                ContactId = existingDoctor.ContactId,                
+                ContactId = existingDoctor.ContactId,
                 SpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = existingDoctor.Qualifications.Select(ds => ds.Id).ToList(),
-                HospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),                
+                HospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
                 AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList(),
                 PatientIds = existingDoctor.Patients.Select(p => p.Id).ToList()
 
@@ -313,6 +313,39 @@ namespace HospitalSystem.API.Controllers
                 HospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
                 AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList(),
                 PatientIds = existingDoctor.Patients.Select(p => p.Id).ToList()
+            };
+
+            return Ok(response);
+        }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteDoctor([FromRoute] Guid id)
+        {
+            var doctor = await doctorRepository.DeleteAsync(id);
+
+            if (doctor is null)
+            {
+                return NotFound();
+            }
+
+            var response = new DoctorDto
+            {
+                Id = doctor.Id,
+                FirstName = doctor.FirstName,
+                LastName = doctor.LastName,
+                DateOfBirth = doctor.DateOfBirth,
+                Gender = doctor.Gender,
+                LicenseNumber = doctor.LicenseNumber,
+                YearsOfExperience = doctor.YearsOfExperience,
+                AddressId = doctor.AddressId,
+                ContactId = doctor.ContactId,
+                SpecializationIds = doctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
+                QualificationIds = doctor.Qualifications.Select(q => q.Id).ToList(),
+                HospitalAffiliationIds = doctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
+                AppointmentIds = doctor.Appointments.Select(a => a.Id).ToList(),
+                PatientIds = doctor.Patients.Select(p => p.Id).ToList()
+
             };
 
             return Ok(response);
