@@ -296,6 +296,7 @@ namespace HospitalSystem.API.Controllers
                     });
                 }
             }
+            
 
             // Update the doctor in the repository
             await doctorRepository.UpdateAsync(existingDoctor);
