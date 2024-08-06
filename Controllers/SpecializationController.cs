@@ -74,5 +74,31 @@ namespace HospitalSystem.API.Controllers
 
         }
 
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateSpecialization([FromRoute]Guid id, UpdateSpecializationRequestDto request)
+        {
+            var existingSpecialization = await specializationRepository.GetById(id);
+            if(existingSpecialization == null)
+            {
+                return NotFound();
+            }
+            existingSpecialization.Description = request.Description;
+
+            var updatedSpecialization = await specializationRepository.UpdateAsync(existingSpecialization);
+            if(updatedSpecialization == null) 
+            { 
+                return NotFound();
+            }
+
+            var response = new SpecializationDto
+            {
+                Id = updatedSpecialization.Id,
+                Name = updatedSpecialization.Name,
+                Description = updatedSpecialization.Description
+            };
+
+            return Ok(response);
+        }
     }
 }
