@@ -48,10 +48,11 @@ namespace HospitalSystem.API.Repositories.Implementation
         {
             var existingSpecialization = await dbContext.Specializations.FirstOrDefaultAsync(x => x.Id == id);
 
-            if(existingSpecialization != null)
+            if(existingSpecialization is null)
             {
                 return null;
             }
+
             dbContext.Specializations.Remove(existingSpecialization);
             await dbContext.SaveChangesAsync();
             return existingSpecialization;

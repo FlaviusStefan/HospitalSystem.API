@@ -74,8 +74,5 @@ namespace HospitalSystem.API.Repositories.Implementation
             await dbContext.SaveChangesAsync();
             return existingQualification;
         }
-
-
-
     }
 }

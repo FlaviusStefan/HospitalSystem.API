@@ -31,6 +31,7 @@ namespace HospitalSystem.API.Controllers
 
             var response = new SpecializationDto
             {
+                Id = specialization.Id,
                 Name = specialization.Name,
                 Description = specialization.Description
             };
@@ -96,6 +97,27 @@ namespace HospitalSystem.API.Controllers
                 Id = updatedSpecialization.Id,
                 Name = updatedSpecialization.Name,
                 Description = updatedSpecialization.Description
+            };
+
+            return Ok(response);
+        }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteSpecialization([FromRoute] Guid id)
+        {
+            var specialization = await specializationRepository.DeleteAsync(id);
+
+            if(specialization is null)
+            {
+                return NotFound();
+            }
+
+            var response = new SpecializationDto
+            {
+                Id = specialization.Id,
+                Name = specialization.Name,
+                Description = specialization.Description
             };
 
             return Ok(response);
