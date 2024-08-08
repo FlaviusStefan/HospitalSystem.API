@@ -72,6 +72,8 @@ namespace HospitalSystem.API.Controllers
             };
 
             return Ok(response);
+            /* */
         }
     }
 }
+
