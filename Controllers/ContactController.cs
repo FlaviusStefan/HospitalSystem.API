@@ -73,5 +73,55 @@ namespace HospitalSystem.API.Controllers
 
             return Ok(response);
         }
+
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateContact([FromRoute] Guid id,UpdateContactRequestDto request)
+        {
+            var existingContact = await contactRepository.GetById(id);
+            if(existingContact == null)
+            {
+                return NotFound();
+            }
+
+            existingContact.Phone = request.Phone;
+            existingContact.Email = request.Email;
+
+            var updatedContact = await contactRepository.UpdateAsync(existingContact);
+            if(updatedContact == null)
+            {
+                return NotFound();
+            }
+
+            var response = new ContactDto
+            {
+                Id = updatedContact.Id,
+                Phone = updatedContact.Phone,
+                Email = updatedContact.Email
+            };
+
+            return Ok(response);
+        }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteContact([FromRoute] Guid id)
+        {
+            var contact = await contactRepository.DeleteAsync(id);
+
+            if(contact is null) 
+            {
+                return NotFound();
+            }
+
+            var response = new ContactDto
+            {
+                Id = contact.Id,
+                Phone = contact.Phone,
+                Email = contact.Email
+            };
+
+            return Ok(response);
+        }
     }
 }
