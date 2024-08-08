@@ -42,17 +42,15 @@ namespace HospitalSystem.API.Repositories.Implementation
 
             if (existingQualification != null)
             {
-                // Verify the DoctorId exists in the Doctors table
                 var doctorExists = await dbContext.Doctors.AnyAsync(d => d.Id == qualification.DoctorId);
                 if (!doctorExists)
                 {
                     throw new InvalidOperationException($"Doctor with Id {qualification.DoctorId} does not exist.");
                 }
 
-                // Update properties
                 existingQualification.Degree = qualification.Degree;
                 existingQualification.Institution = qualification.Institution;
-                existingQualification.DoctorId = qualification.DoctorId; // Ensure this is valid
+                existingQualification.DoctorId = qualification.DoctorId; 
 
                 await dbContext.SaveChangesAsync();
                 return existingQualification;
