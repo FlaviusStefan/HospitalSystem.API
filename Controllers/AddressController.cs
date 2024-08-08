@@ -148,7 +148,7 @@ namespace HospitalSystem.API.Controllers
                 PostalCode = address.PostalCode
             };
 
-            return Ok(response);
+            return Ok(response); 
         }
     }
 }
