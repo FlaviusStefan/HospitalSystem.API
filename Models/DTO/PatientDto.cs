@@ -14,10 +14,10 @@
         public Guid ContactId { get; set; }
         public ContactDto Contact { get; set; }
         public Guid PrimaryCarePhysicianId { get; set; }
-        public ICollection<MedicalFileDto> MedicalFiles { get; set; }
-        public ICollection<MedicationDto> CurrentMedications { get; set; }
-        public ICollection<InsuranceDto> Insurances { get; set; }
-        public ICollection<AppointmentDto> Appointments { get; set; }
-        public ICollection<LabAnalysisDto> LabAnalyses { get; set; }
+        public ICollection<Guid> MedicalFileIds { get; set; }
+        public ICollection<Guid> CurrentMedicationIds { get; set; }
+        public ICollection<Guid> InsuranceIds { get; set; }
+        public ICollection<Guid> AppointmentIds { get; set; }
+        public ICollection<Guid> LabAnalysisIds { get; set; }
     }
 }
