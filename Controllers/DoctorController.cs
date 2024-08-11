@@ -1,5 +1,6 @@
 ﻿using HospitalSystem.API.Models.Domain;
 using HospitalSystem.API.Models.DTO;
+using HospitalSystem.API.Repositories.Implementation;
 using HospitalSystem.API.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,16 +13,44 @@ namespace HospitalSystem.API.Controllers
     public class DoctorController : ControllerBase
     {
         private readonly IDoctorRepository doctorRepository;
+        private readonly IAddressRepository addressRepository;
+        private readonly IContactRepository contactRepository;
 
-        public DoctorController(IDoctorRepository doctorRepository)
+        public DoctorController(IDoctorRepository doctorRepository, IAddressRepository addressRepository, IContactRepository contactRepository)
         {
             this.doctorRepository = doctorRepository;
+            this.addressRepository = addressRepository;
+            this.contactRepository = contactRepository;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateDoctor(CreateDoctorRequestDto request)
         {
-            // Create the Doctor entity
+            // Create Address entity
+            var address = new Address
+            {
+                Id = Guid.NewGuid(),
+                Street = request.Address.Street,
+                StreetNr = request.Address.StreetNr,
+                City = request.Address.City,
+                State = request.Address.State,
+                Country = request.Address.Country,
+                PostalCode = request.Address.PostalCode
+            };
+
+            // Create Contact entity
+            var contact = new Contact
+            {
+                Id = Guid.NewGuid(),
+                Phone = request.Contact.Phone,
+                Email = request.Contact.Email
+            };
+
+            // Save Address and Contact to the database
+            await addressRepository.CreateAsync(address);
+            await contactRepository.CreateAsync(contact);
+
+            // Create Doctor entity
             var doctor = new Doctor
             {
                 Id = Guid.NewGuid(),
@@ -31,8 +60,8 @@ namespace HospitalSystem.API.Controllers
                 Gender = request.Gender,
                 LicenseNumber = request.LicenseNumber,
                 YearsOfExperience = request.YearsOfExperience,
-                AddressId = request.AddressId,
-                ContactId = request.ContactId
+                AddressId = address.Id,
+                ContactId = contact.Id
             };
 
             // Create the DoctorSpecializations relationships
@@ -65,6 +94,7 @@ namespace HospitalSystem.API.Controllers
 
             return Ok(response);
         }
+
 
 
         [HttpGet]

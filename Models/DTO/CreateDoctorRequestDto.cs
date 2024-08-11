@@ -8,8 +8,8 @@
         public string Gender { get; set; }
         public string LicenseNumber { get; set; }
         public int YearsOfExperience { get; set; }
-        public Guid AddressId { get; set; }
-        public Guid ContactId { get; set; }
+        public CreateAddressRequestDto Address { get; set; }
+        public CreateContactRequestDto Contact { get; set; }
         public ICollection<Guid> SpecializationIds { get; set; }
     }
 }
