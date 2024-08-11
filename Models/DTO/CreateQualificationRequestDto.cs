@@ -6,7 +6,7 @@
         public string Degree { get; set; }
         public string Institution { get; set; }
         public int StudiedYears { get; set; }
-        public DateTime YearOfCompletion { get; set; }
+        public int YearOfCompletion { get; set; }
     }
 }
 
