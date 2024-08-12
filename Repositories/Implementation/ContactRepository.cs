@@ -1,6 +1,7 @@
 ﻿using HospitalSystem.API.Data;
 using HospitalSystem.API.Models.Domain;
 using HospitalSystem.API.Repositories.Interface;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace HospitalSystem.API.Repositories.Implementation
@@ -49,15 +50,25 @@ namespace HospitalSystem.API.Repositories.Implementation
 
         public async Task<Contact?> DeleteAsync(Guid id)
         {
-            var existingContact = await dbContext.Contacts.FirstOrDefaultAsync(x => x.Id == id);
-            if(existingContact is null) 
+            var existingContact = await dbContext.Contacts
+                .Include(c => c.Hospitals)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (existingContact == null)
             {
                 return null;
+            }
+
+            if (existingContact.Hospitals.Any())
+            {
+
+                throw new InvalidOperationException("Contact is associated with one or more hospitals and cannot be deleted.");
             }
 
             dbContext.Contacts.Remove(existingContact);
             await dbContext.SaveChangesAsync();
             return existingContact;
         }
+
     }
 }

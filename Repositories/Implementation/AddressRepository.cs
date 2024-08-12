@@ -56,16 +56,24 @@ namespace HospitalSystem.API.Repositories.Implementation
 
         public async Task<Address?> DeleteAsync(Guid id)
         {
-            var existingAddress = await dbContext.Addresses.FirstOrDefaultAsync(x => x.Id == id);
+            var existingAddress = await dbContext.Addresses
+                .Include(a => a.Hospitals)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (existingAddress is null)
+            if (existingAddress == null)
             {
                 return null;
+            }
+
+            if (existingAddress.Hospitals.Any())
+            {
+                throw new InvalidOperationException("Address is associated with one or more hospitals and cannot be deleted.");
             }
 
             dbContext.Addresses.Remove(existingAddress);
             await dbContext.SaveChangesAsync();
             return existingAddress;
         }
+
     }
 }

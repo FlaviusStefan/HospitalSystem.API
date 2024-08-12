@@ -61,6 +61,38 @@ namespace HospitalSystem.API.Repositories.Implementation
             await dbContext.SaveChangesAsync();
             return existingHospital;
         }
-    
+
+        public async Task<Hospital?> DeleteWithAddressAndContactAsync(Guid id)
+        {
+            var existingHospital = await dbContext.Hospitals
+                .Include(h => h.Address)
+                .Include(h => h.Contact)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (existingHospital == null)
+            {
+                return null;
+            }
+
+            // Delete related address and contact if they are not associated with other hospitals
+            if (existingHospital.Address != null && !dbContext.Hospitals.Any(h => h.AddressId == existingHospital.Address.Id && h.Id != id))
+            {
+                dbContext.Addresses.Remove(existingHospital.Address);
+            }
+
+            if (existingHospital.Contact != null && !dbContext.Hospitals.Any(h => h.ContactId == existingHospital.Contact.Id && h.Id != id))
+            {
+                dbContext.Contacts.Remove(existingHospital.Contact);
+            }
+
+            // Delete the hospital
+            dbContext.Hospitals.Remove(existingHospital);
+
+            await dbContext.SaveChangesAsync();
+
+            return existingHospital;
+        }
+
+
     }
 }
