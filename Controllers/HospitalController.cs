@@ -134,28 +134,6 @@ namespace HospitalSystem.API.Controllers
         }
 
         [HttpDelete]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> DeleteHospital([FromRoute] Guid id)
-        {
-            var hospital = await hospitalRepository.DeleteAsync(id);
-
-            if(hospital is null)
-            {
-                return NotFound();
-            }
-
-            var response = new HospitalDto
-            {
-                Id = hospital.Id,
-                Name = hospital.Name,
-                AddressId = hospital.AddressId,
-                ContactId = hospital.ContactId
-            };
-
-            return Ok(response);
-        }
-
-        [HttpDelete]
         [Route("{id:Guid}/with-dependencies")]
         public async Task<IActionResult> DeleteHospitalWithDependencies([FromRoute] Guid id)
         {
