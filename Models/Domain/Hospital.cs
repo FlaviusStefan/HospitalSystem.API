@@ -8,6 +8,6 @@
         public Address Address { get; set; }
         public Guid ContactId { get; set; }
         public Contact Contact { get; set; }
-        public ICollection<HospitalAffiliation> HospitalAffiliations { get; set; }
+        public ICollection<DoctorHospital> DoctorHospitals { get; set; } = new List<DoctorHospital>();
     }
 }

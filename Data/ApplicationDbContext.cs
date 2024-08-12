@@ -18,7 +18,6 @@ namespace HospitalSystem.API.Data
         public DbSet<Medication> Medications { get; set; }
         public DbSet<Insurance> Insurances { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
-        public DbSet<HospitalAffiliation> HospitalAffiliations { get; set; }
         public DbSet<Qualification> Qualifications { get; set; }
         public DbSet<Hospital> Hospitals { get; set; }
         public DbSet<LabAnalysis> LabAnalyses { get; set; }
@@ -103,10 +102,17 @@ namespace HospitalSystem.API.Data
                 .HasKey(ds => new { ds.DoctorId, ds.SpecializationId });
 
             modelBuilder.Entity<Doctor>()
-                .HasMany(d => d.HospitalAffiliations)
+                .HasMany(d => d.DoctorHospitals)
                 .WithOne(ha => ha.Doctor)
-                .HasForeignKey(ha => ha.DoctorId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(ha => ha.DoctorId);
+
+            modelBuilder.Entity<Hospital>()
+                .HasMany(h => h.DoctorHospitals)
+                .WithOne(ds => ds.Hospital)
+                .HasForeignKey(ds => ds.HospitalId);
+
+            modelBuilder.Entity<DoctorHospital>()
+                .HasKey(ds => new { ds.DoctorId, ds.HospitalId });
 
             modelBuilder.Entity<Doctor>()
                 .HasMany(d => d.Qualifications)
@@ -140,12 +146,6 @@ namespace HospitalSystem.API.Data
                 .HasOne(h => h.Contact)
                 .WithMany(c => c.Hospitals)
                 .HasForeignKey(h => h.ContactId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Hospital>()
-                .HasMany(h => h.HospitalAffiliations)
-                .WithOne(ha => ha.Hospital)
-                .HasForeignKey(ha => ha.HospitalId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Configuration for Patient entity
@@ -248,22 +248,6 @@ namespace HospitalSystem.API.Data
                 .HasOne(a => a.Patient)
                 .WithMany(p => p.Appointments)
                 .HasForeignKey(a => a.PatientId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Configuration for HospitalAffiliation entity
-            modelBuilder.Entity<HospitalAffiliation>()
-                .HasKey(ha => ha.Id);
-
-            modelBuilder.Entity<HospitalAffiliation>()
-                .HasOne(ha => ha.Doctor)
-                .WithMany(d => d.HospitalAffiliations)
-                .HasForeignKey(ha => ha.DoctorId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<HospitalAffiliation>()
-                .HasOne(ha => ha.Hospital)
-                .WithMany(h => h.HospitalAffiliations)
-                .HasForeignKey(ha => ha.HospitalId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Configuration for Qualification entity

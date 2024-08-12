@@ -11,5 +11,6 @@
         public CreateAddressRequestDto Address { get; set; }
         public CreateContactRequestDto Contact { get; set; }
         public ICollection<Guid> SpecializationIds { get; set; }
+        public ICollection<Guid> HospitalIds { get; set; }
     }
 }

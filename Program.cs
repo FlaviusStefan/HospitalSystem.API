@@ -22,6 +22,7 @@ builder.Services.AddScoped<IQualificationRepository, QualificationRepository>();
 builder.Services.AddScoped<ISpecializationRepository, SpecializationRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
+builder.Services.AddScoped<IHospitalRepository, HospitalRepository>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 
 

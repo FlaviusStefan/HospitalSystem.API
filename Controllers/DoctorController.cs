@@ -74,6 +74,14 @@ namespace HospitalSystem.API.Controllers
             // Set the DoctorSpecializations on the Doctor entity
             doctor.DoctorSpecializations = doctorSpecializations;
 
+            var doctorHospitals = request.HospitalIds.Select(hid => new DoctorHospital
+            {
+                DoctorId = doctor.Id,
+                HospitalId = hid
+            }).ToList();
+
+            doctor.DoctorHospitals = doctorHospitals;
+
             // Save the doctor to the database
             await doctorRepository.CreateAsync(doctor);
 
@@ -86,6 +94,7 @@ namespace HospitalSystem.API.Controllers
                 DateOfBirth = doctor.DateOfBirth,
                 Gender = doctor.Gender,
                 SpecializationIds = request.SpecializationIds,
+                HospitalIds = request.HospitalIds,
                 LicenseNumber = doctor.LicenseNumber,
                 YearsOfExperience = doctor.YearsOfExperience,
                 AddressId = doctor.AddressId,
@@ -115,7 +124,7 @@ namespace HospitalSystem.API.Controllers
                 ContactId = doctor.ContactId,
                 SpecializationIds = doctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = doctor.Qualifications.Select(q => q.Id).ToList(),
-                HospitalAffiliationIds = doctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
+                HospitalIds = doctor.DoctorHospitals.Select(dh => dh.HospitalId).ToList(),
                 AppointmentIds = doctor.Appointments.Select(a => a.Id).ToList(),
                 PatientIds = doctor.Patients.Select(p => p.Id).ToList()
 
@@ -148,7 +157,7 @@ namespace HospitalSystem.API.Controllers
                 ContactId = existingDoctor.ContactId,
                 SpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = existingDoctor.Qualifications.Select(ds => ds.Id).ToList(),
-                HospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
+                HospitalIds = existingDoctor.DoctorHospitals.Select(dh => dh.HospitalId).ToList(),
                 AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList(),
                 PatientIds = existingDoctor.Patients.Select(p => p.Id).ToList()
 
@@ -207,6 +216,37 @@ namespace HospitalSystem.API.Controllers
                 }
             }
 
+            // Update hospitals
+            var existingHospitalIds = existingDoctor.DoctorHospitals.Select(dh => dh.HospitalId).ToList();
+            var newHospitalIds = request.HospitalIds ?? new List<Guid>();
+
+            // Remove hospitals that are no longer in the request
+            foreach (var hospitalId in existingHospitalIds)
+            {
+                if (!newHospitalIds.Contains(hospitalId))
+                {
+                    var hospitalToRemove = existingDoctor.DoctorHospitals
+                        .FirstOrDefault(ds => ds.HospitalId == hospitalId);
+                    if (hospitalToRemove != null)
+                    {
+                        existingDoctor.DoctorHospitals.Remove(hospitalToRemove);
+                    }
+                }
+            }
+
+            // Add new hospitals from the request
+            foreach (var hospitalId in newHospitalIds)
+            {
+                if (!existingHospitalIds.Contains(hospitalId))
+                {
+                    existingDoctor.DoctorHospitals.Add(new DoctorHospital
+                    {
+                        DoctorId = id,
+                        HospitalId = hospitalId
+                    });
+                }
+            }
+
             // Update qualifications
             var existingQualificationIds = existingDoctor.Qualifications.Select(q => q.Id).ToList();
             var newQualificationIds = request.QualificationIds ?? new List<Guid>();
@@ -237,35 +277,6 @@ namespace HospitalSystem.API.Controllers
                 }
             }
 
-            // Update hospital affiliations
-            var existingHospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList();
-            var newHospitalAffiliationIds = request.HospitalAffiliationIds ?? new List<Guid>();
-
-            // Remove hospital affiliations that are no longer in the request
-            foreach (var existingHospitalAffiliationId in existingHospitalAffiliationIds)
-            {
-                if (!newHospitalAffiliationIds.Contains(existingHospitalAffiliationId))
-                {
-                    var hospitalAffiliationToRemove = existingDoctor.HospitalAffiliations
-                        .FirstOrDefault(ha => ha.Id == existingHospitalAffiliationId);
-                    if (hospitalAffiliationToRemove != null)
-                    {
-                        existingDoctor.HospitalAffiliations.Remove(hospitalAffiliationToRemove);
-                    }
-                }
-            }
-
-            // Add new hospital affiliations
-            foreach (var hospitalAffiliationId in newHospitalAffiliationIds)
-            {
-                if (!existingHospitalAffiliationIds.Contains(hospitalAffiliationId))
-                {
-                    existingDoctor.HospitalAffiliations.Add(new HospitalAffiliation
-                    {
-                        Id = hospitalAffiliationId
-                    });
-                }
-            }
 
             // Update appointments
             var existingAppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList();
@@ -341,7 +352,7 @@ namespace HospitalSystem.API.Controllers
                 ContactId = existingDoctor.ContactId,
                 SpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = existingDoctor.Qualifications.Select(q => q.Id).ToList(),
-                HospitalAffiliationIds = existingDoctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
+                HospitalIds = existingDoctor.DoctorHospitals.Select(dh => dh.HospitalId).ToList(),
                 AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList(),
                 PatientIds = existingDoctor.Patients.Select(p => p.Id).ToList()
             };
@@ -373,7 +384,7 @@ namespace HospitalSystem.API.Controllers
                 ContactId = doctor.ContactId,
                 SpecializationIds = doctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = doctor.Qualifications.Select(q => q.Id).ToList(),
-                HospitalAffiliationIds = doctor.HospitalAffiliations.Select(ha => ha.Id).ToList(),
+                HospitalIds = doctor.DoctorHospitals.Select(dh => dh.HospitalId).ToList(),
                 AppointmentIds = doctor.Appointments.Select(a => a.Id).ToList(),
                 PatientIds = doctor.Patients.Select(p => p.Id).ToList()
 
