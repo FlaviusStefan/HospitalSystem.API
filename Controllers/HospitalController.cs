@@ -66,7 +66,93 @@ namespace HospitalSystem.API.Controllers
             };
 
             return Ok(response);
+        }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllHospitals()
+        {
+            var hospitals = await hospitalRepository.GetAllAsync();
+
+            var response = hospitals.Select(hospital => new HospitalDto
+            {
+                Id = hospital.Id,
+                Name = hospital.Name,
+                AddressId = hospital.AddressId,
+                ContactId = hospital.ContactId
+            }).ToList();
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetHospitalById([FromRoute]Guid id)
+        {
+            var existingHospital = await hospitalRepository.GetById(id);
+            if(existingHospital is null)
+            {
+                return NotFound();
+            }
+
+            var response = new HospitalDto
+            {
+                Id = existingHospital.Id,
+                Name = existingHospital.Name,
+                AddressId = existingHospital.AddressId,
+                ContactId = existingHospital.ContactId
+            };
+
+            return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateHospital([FromRoute] Guid id, UpdateHospitalRequestDto request)
+        {
+            var existingHospital = await hospitalRepository.GetById(id);
+            if (existingHospital is null)
+            {
+                return NotFound();
+            }
+
+            existingHospital.Name = request.Name;
+            existingHospital.AddressId = request.AddressId;
+            existingHospital.ContactId = request.ContactId;
+
+            await hospitalRepository.UpdateAsync(existingHospital);
+
+            var response = new HospitalDto
+            { 
+                Id = existingHospital.Id, 
+                Name = existingHospital.Name, 
+                AddressId = existingHospital.AddressId, 
+                ContactId = existingHospital.ContactId 
+            };
+
+            return Ok(response);
+
+        }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteHospital([FromRoute] Guid id)
+        {
+            var hospital = await hospitalRepository.DeleteAsync(id);
+
+            if(hospital is null)
+            {
+                return NotFound();
+            }
+
+            var response = new HospitalDto
+            {
+                Id = hospital.Id,
+                Name = hospital.Name,
+                AddressId = hospital.AddressId,
+                ContactId = hospital.ContactId
+            };
+
+            return Ok(response);
         }
     }
 }

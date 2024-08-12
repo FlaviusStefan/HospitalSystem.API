@@ -140,13 +140,13 @@ namespace HospitalSystem.API.Data
                 .HasOne(h => h.Address)
                 .WithMany(a => a.Hospitals)
                 .HasForeignKey(h => h.AddressId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Hospital>()
                 .HasOne(h => h.Contact)
                 .WithMany(c => c.Hospitals)
                 .HasForeignKey(h => h.ContactId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Configuration for Patient entity
             modelBuilder.Entity<Patient>()
