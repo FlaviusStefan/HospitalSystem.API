@@ -5,7 +5,7 @@ namespace HospitalSystem.API.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
@@ -23,10 +23,19 @@ namespace HospitalSystem.API.Data
         public DbSet<LabAnalysis> LabAnalyses { get; set; }
         public DbSet<LabTest> LabTests { get; set; }
 
+        // Add DbSets for relationship entities
+        public DbSet<DoctorSpecialization> DoctorSpecializations { get; set; }
+        public DbSet<DoctorHospital> DoctorHospitals { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<DoctorSpecialization>()
+                .ToTable("DoctorSpecializations");
+
+            modelBuilder.Entity<DoctorHospital>()
+                .ToTable("DoctorHospitals");
 
             // Configuration for Address entity
             modelBuilder.Entity<Address>()
@@ -286,6 +295,6 @@ namespace HospitalSystem.API.Data
                 .HasForeignKey(lt => lt.LabAnalysisId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
-
     }
+
 }

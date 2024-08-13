@@ -493,10 +493,10 @@ namespace HospitalSystem.API.Controllers
                 HospitalIds = doctor.DoctorHospitals.Select(dh => dh.HospitalId).ToList(),
                 AppointmentIds = doctor.Appointments.Select(a => a.Id).ToList(),
                 PatientIds = doctor.Patients.Select(p => p.Id).ToList()
-
             };
 
             return Ok(response);
         }
+
     }
 }

@@ -105,7 +105,7 @@ namespace HospitalSystem.API.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("{id:Guid}")]
         public async Task<IActionResult> UpdateHospital([FromRoute] Guid id, UpdateHospitalRequestDto request)
         {

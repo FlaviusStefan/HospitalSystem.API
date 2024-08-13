@@ -137,17 +137,60 @@ namespace HospitalSystem.API.Repositories.Implementation
 
         public async Task<Doctor?> DeleteAsync(Guid id)
         {
-            var existingDoctor = await dbContext.Doctors.FirstOrDefaultAsync(x => x.Id == id);
+            // Fetch the doctor with related entities
+            var existingDoctor = await dbContext.Doctors
+                .Include(d => d.Address)
+                .Include(d => d.Contact)
+                .Include(d => d.DoctorSpecializations)
+                .Include(d => d.Qualifications)
+                .Include(d => d.DoctorHospitals)
+                .Include(d => d.Appointments)
+                .Include(d => d.Patients)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (existingDoctor is null)
             {
                 return null;
             }
 
+            // Remove related entities
+            if (existingDoctor.Address != null)
+            {
+                // Address should be removed from Doctors first if it's required
+                existingDoctor.Address.Doctors.Remove(existingDoctor);
+                if (!existingDoctor.Address.Doctors.Any()) // Remove Address if no other Doctors reference it
+                {
+                    dbContext.Addresses.Remove(existingDoctor.Address);
+                }
+            }
+
+            if (existingDoctor.Contact != null)
+            {
+                // Contact should be removed from Doctors first if it's required
+                existingDoctor.Contact.Doctors.Remove(existingDoctor);
+                if (!existingDoctor.Contact.Doctors.Any()) // Remove Contact if no other Doctors reference it
+                {
+                    dbContext.Contacts.Remove(existingDoctor.Contact);
+                }
+            }
+
+            // Remove related entities
+            dbContext.DoctorSpecializations.RemoveRange(existingDoctor.DoctorSpecializations);
+            dbContext.Qualifications.RemoveRange(existingDoctor.Qualifications);
+            dbContext.DoctorHospitals.RemoveRange(existingDoctor.DoctorHospitals);
+            dbContext.Appointments.RemoveRange(existingDoctor.Appointments);
+
+            // Remove the doctor
             dbContext.Doctors.Remove(existingDoctor);
+
+            // Save changes
             await dbContext.SaveChangesAsync();
+
             return existingDoctor;
         }
+
+
+
 
 
 
