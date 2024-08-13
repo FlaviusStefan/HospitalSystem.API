@@ -1,4 +1,6 @@
-﻿namespace HospitalSystem.API.Models.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HospitalSystem.API.Models.DTO
 {
     public class CreateDoctorRequestDto
     {
@@ -10,7 +12,11 @@
         public int YearsOfExperience { get; set; }
         public CreateAddressRequestDto Address { get; set; }
         public CreateContactRequestDto Contact { get; set; }
+
+        [Required(ErrorMessage = "SpecializationIds are required.")]
         public ICollection<Guid> SpecializationIds { get; set; }
+
+        [Required(ErrorMessage = "HospitalIds are required.")]
         public ICollection<Guid> HospitalIds { get; set; }
     }
 }

@@ -36,7 +36,7 @@ namespace HospitalSystem.API.Data
                 .HasMany(a => a.Doctors)
                 .WithOne(d => d.Address)
                 .HasForeignKey(d => d.AddressId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Address>()
                 .HasMany(a => a.Patients)
@@ -48,7 +48,7 @@ namespace HospitalSystem.API.Data
                 .HasMany(a => a.Hospitals)
                 .WithOne(h => h.Address)
                 .HasForeignKey(h => h.AddressId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             // Configuration for Contact entity
             modelBuilder.Entity<Contact>()
@@ -58,7 +58,7 @@ namespace HospitalSystem.API.Data
                 .HasMany(c => c.Doctors)
                 .WithOne(d => d.Contact)
                 .HasForeignKey(d => d.ContactId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Contact>()
                 .HasMany(c => c.Patients)
@@ -70,7 +70,7 @@ namespace HospitalSystem.API.Data
                 .HasMany(c => c.Hospitals)
                 .WithOne(h => h.Contact)
                 .HasForeignKey(h => h.ContactId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             // Configuration for Doctor entity
             modelBuilder.Entity<Doctor>()

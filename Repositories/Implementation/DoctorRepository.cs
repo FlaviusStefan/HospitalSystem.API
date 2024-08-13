@@ -7,20 +7,91 @@ namespace HospitalSystem.API.Repositories.Implementation
 {
     public class DoctorRepository : IDoctorRepository
     {
-        private readonly ApplicationDbContext dbContext;
 
-        public DoctorRepository(ApplicationDbContext dbContext)
+
+
+        //private readonly ApplicationDbContext dbContext;
+
+        //public DoctorRepository(ApplicationDbContext dbContext)
+        //{
+        //    this.dbContext = dbContext;
+        //}
+
+        //public async Task<Doctor> CreateAsync(Doctor doctor)
+        //{
+        //    await dbContext.Doctors.AddAsync(doctor);
+        //    await dbContext.SaveChangesAsync();
+
+        //    return doctor;
+        //}    
+
+        private readonly ApplicationDbContext dbContext;
+        private readonly IAddressRepository addressRepository;
+        private readonly IContactRepository contactRepository;
+
+        public DoctorRepository(ApplicationDbContext dbContext, IAddressRepository addressRepository, IContactRepository contactRepository)
         {
             this.dbContext = dbContext;
+            this.addressRepository = addressRepository;
+            this.contactRepository = contactRepository;
         }
 
-        public async Task<Doctor> CreateAsync(Doctor doctor)
+        public async Task<Doctor> CreateAsync(Doctor doctor, Address address, Contact contact)
         {
-            await dbContext.Doctors.AddAsync(doctor);
-            await dbContext.SaveChangesAsync();
+            using (var transaction = await dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Save address first if provided
+                    if (address != null)
+                    {
+                        address.Id = Guid.NewGuid();
+                        await addressRepository.CreateAsync(address);
 
-            return doctor;
-        }       
+                        // Now associate the address with the doctor
+                        doctor.AddressId = address.Id;
+                    }
+
+                    // Save contact next if provided
+                    if (contact != null)
+                    {
+                        contact.Id = Guid.NewGuid();
+                        await contactRepository.CreateAsync(contact);
+
+                        // Now associate the contact with the doctor
+                        doctor.ContactId = contact.Id;
+                    }
+
+                    // Save the doctor last
+                    dbContext.Doctors.Add(doctor);
+                    await dbContext.SaveChangesAsync();
+
+                    // Commit transaction
+                    await transaction.CommitAsync();
+
+                    return doctor;
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+
+                    // Log the exception in detail
+                    Console.WriteLine($"Error creating doctor: {ex.Message}");
+                    Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                    if (ex.InnerException != null)
+                    {
+                        Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                        Console.WriteLine($"Inner Exception Stack Trace: {ex.InnerException.StackTrace}");
+                    }
+
+                    throw; // Re-throw the exception to be handled at a higher level
+                }
+            }
+        }
+
+
+
 
         public async Task<IEnumerable<Doctor>> GetAllAsync()
         {

@@ -23,34 +23,106 @@ namespace HospitalSystem.API.Controllers
             this.contactRepository = contactRepository;
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> CreateDoctor(CreateDoctorRequestDto request)
+        //{
+        //    // Create Address entity
+        //    var address = new Address
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        Street = request.Address.Street,
+        //        StreetNr = request.Address.StreetNr,
+        //        City = request.Address.City,
+        //        State = request.Address.State,
+        //        Country = request.Address.Country,
+        //        PostalCode = request.Address.PostalCode
+        //    };
+
+        //    // Create Contact entity
+        //    var contact = new Contact
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        Phone = request.Contact.Phone,
+        //        Email = request.Contact.Email
+        //    };
+
+        //    // Save Address and Contact to the database
+        //    await addressRepository.CreateAsync(address);
+        //    await contactRepository.CreateAsync(contact);
+
+        //    // Create Doctor entity
+        //    var doctor = new Doctor
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        FirstName = request.FirstName,
+        //        LastName = request.LastName,
+        //        DateOfBirth = request.DateOfBirth,
+        //        Gender = request.Gender,
+        //        LicenseNumber = request.LicenseNumber,
+        //        YearsOfExperience = request.YearsOfExperience,
+        //        AddressId = address.Id,
+        //        ContactId = contact.Id
+        //    };
+
+        //    // Create the DoctorSpecializations relationships
+        //    var doctorSpecializations = request.SpecializationIds.Select(sid => new DoctorSpecialization
+        //    {
+        //        DoctorId = doctor.Id,
+        //        SpecializationId = sid
+        //    }).ToList();
+
+        //    // Set the DoctorSpecializations on the Doctor entity
+        //    doctor.DoctorSpecializations = doctorSpecializations;
+
+        //    var doctorHospitals = request.HospitalIds.Select(hid => new DoctorHospital
+        //    {
+        //        DoctorId = doctor.Id,
+        //        HospitalId = hid
+        //    }).ToList();
+
+        //    doctor.DoctorHospitals = doctorHospitals;
+
+        //    // Save the doctor to the database
+        //    await doctorRepository.CreateAsync(doctor);
+
+        //    // Create the response DTO
+        //    var response = new DoctorDto
+        //    {
+        //        Id = doctor.Id,
+        //        FirstName = doctor.FirstName,
+        //        LastName = doctor.LastName,
+        //        DateOfBirth = doctor.DateOfBirth,
+        //        Gender = doctor.Gender,
+        //        SpecializationIds = request.SpecializationIds,
+        //        HospitalIds = request.HospitalIds,
+        //        LicenseNumber = doctor.LicenseNumber,
+        //        YearsOfExperience = doctor.YearsOfExperience,
+        //        AddressId = doctor.AddressId,
+        //        ContactId = doctor.ContactId
+        //    };
+
+        //    return Ok(response);
+        //}
+
         [HttpPost]
         public async Task<IActionResult> CreateDoctor(CreateDoctorRequestDto request)
         {
-            // Create Address entity
-            var address = new Address
+            if (!ModelState.IsValid)
             {
-                Id = Guid.NewGuid(),
-                Street = request.Address.Street,
-                StreetNr = request.Address.StreetNr,
-                City = request.Address.City,
-                State = request.Address.State,
-                Country = request.Address.Country,
-                PostalCode = request.Address.PostalCode
-            };
+                return BadRequest(ModelState);
+            }
 
-            // Create Contact entity
-            var contact = new Contact
+            if (request.SpecializationIds == null || !request.SpecializationIds.Any())
             {
-                Id = Guid.NewGuid(),
-                Phone = request.Contact.Phone,
-                Email = request.Contact.Email
-            };
+                return BadRequest("At least one SpecializationId is required.");
+            }
 
-            // Save Address and Contact to the database
-            await addressRepository.CreateAsync(address);
-            await contactRepository.CreateAsync(contact);
+            if (request.HospitalIds == null || !request.HospitalIds.Any())
+            {
+                return BadRequest("At least one HospitalId is required.");
+            }
 
-            // Create Doctor entity
+            // Create the Doctor entity
             var doctor = new Doctor
             {
                 Id = Guid.NewGuid(),
@@ -60,48 +132,82 @@ namespace HospitalSystem.API.Controllers
                 Gender = request.Gender,
                 LicenseNumber = request.LicenseNumber,
                 YearsOfExperience = request.YearsOfExperience,
-                AddressId = address.Id,
-                ContactId = contact.Id
+                DoctorSpecializations = request.SpecializationIds.Select(sid => new DoctorSpecialization
+                {
+                    DoctorId = Guid.NewGuid(),
+                    SpecializationId = sid
+                }).ToList(),
+                DoctorHospitals = request.HospitalIds.Select(hid => new DoctorHospital
+                {
+                    DoctorId = Guid.NewGuid(),
+                    HospitalId = hid
+                }).ToList()
             };
 
-            // Create the DoctorSpecializations relationships
-            var doctorSpecializations = request.SpecializationIds.Select(sid => new DoctorSpecialization
+            // Create the Address entity if provided
+            Address address = null;
+            if (request.Address != null)
             {
-                DoctorId = doctor.Id,
-                SpecializationId = sid
-            }).ToList();
+                address = new Address
+                {
+                    Street = request.Address.Street,
+                    StreetNr = request.Address.StreetNr,
+                    City = request.Address.City,
+                    State = request.Address.State,
+                    Country = request.Address.Country,
+                    PostalCode = request.Address.PostalCode
+                };
+            }
 
-            // Set the DoctorSpecializations on the Doctor entity
-            doctor.DoctorSpecializations = doctorSpecializations;
-
-            var doctorHospitals = request.HospitalIds.Select(hid => new DoctorHospital
+            // Create the Contact entity if provided
+            Contact contact = null;
+            if (request.Contact != null)
             {
-                DoctorId = doctor.Id,
-                HospitalId = hid
-            }).ToList();
+                contact = new Contact
+                {
+                    Phone = request.Contact.Phone,
+                    Email = request.Contact.Email
+                };
+            }
 
-            doctor.DoctorHospitals = doctorHospitals;
-
-            // Save the doctor to the database
-            await doctorRepository.CreateAsync(doctor);
-
-            // Create the response DTO
-            var response = new DoctorDto
+            try
             {
-                Id = doctor.Id,
-                FirstName = doctor.FirstName,
-                LastName = doctor.LastName,
-                DateOfBirth = doctor.DateOfBirth,
-                Gender = doctor.Gender,
-                SpecializationIds = request.SpecializationIds,
-                HospitalIds = request.HospitalIds,
-                LicenseNumber = doctor.LicenseNumber,
-                YearsOfExperience = doctor.YearsOfExperience,
-                AddressId = doctor.AddressId,
-                ContactId = doctor.ContactId
-            };
+                // Create the doctor along with address and contact
+                var createdDoctor = await doctorRepository.CreateAsync(doctor, address, contact);
 
-            return Ok(response);
+                // Prepare the response DTO
+                var response = new DoctorDto
+                {
+                    Id = createdDoctor.Id,
+                    FirstName = createdDoctor.FirstName,
+                    LastName = createdDoctor.LastName,
+                    DateOfBirth = createdDoctor.DateOfBirth,
+                    Gender = createdDoctor.Gender,
+                    LicenseNumber = createdDoctor.LicenseNumber,
+                    YearsOfExperience = createdDoctor.YearsOfExperience,
+                    SpecializationIds = request.SpecializationIds,
+                    HospitalIds = request.HospitalIds,
+                    AddressId = createdDoctor.AddressId,
+                    ContactId = createdDoctor.ContactId
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                // Log the detailed exception
+                Console.WriteLine($"Error creating doctor: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                    Console.WriteLine($"Inner Exception Stack Trace: {ex.InnerException.StackTrace}");
+                }
+
+                return StatusCode(500, "An error occurred while creating the doctor.");
+            }
+
         }
 
 
