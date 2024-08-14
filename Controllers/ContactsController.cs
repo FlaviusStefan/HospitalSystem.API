@@ -8,11 +8,11 @@ namespace HospitalSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ContactController : ControllerBase
+    public class ContactsController : ControllerBase
     {
         private readonly IContactRepository contactRepository;
 
-        public ContactController(IContactRepository contactRepository)
+        public ContactsController(IContactRepository contactRepository)
         {
             this.contactRepository = contactRepository;
         }

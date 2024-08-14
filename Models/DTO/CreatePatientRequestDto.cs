@@ -8,6 +8,7 @@
         public string Gender { get; set; }
         public double Height { get; set; }
         public double Weight { get; set; }
+        public Guid? PrimaryCarePhysicianId { get; set; }
         public CreateAddressRequestDto Address { get; set; }
         public CreateContactRequestDto Contact { get; set; }
     }

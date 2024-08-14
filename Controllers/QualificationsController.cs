@@ -8,11 +8,11 @@ namespace HospitalSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QualificationController : ControllerBase
+    public class QualificationsController : ControllerBase
     {
         private readonly IQualificationRepository qualificationRepository;
 
-        public QualificationController(IQualificationRepository qualificationRepository)
+        public QualificationsController(IQualificationRepository qualificationRepository)
         {
             this.qualificationRepository = qualificationRepository;
         }

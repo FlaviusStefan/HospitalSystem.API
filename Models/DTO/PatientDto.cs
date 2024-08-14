@@ -13,7 +13,7 @@
         public AddressDto Address { get; set; }
         public Guid ContactId { get; set; }
         public ContactDto Contact { get; set; }
-        public Guid PrimaryCarePhysicianId { get; set; }
+        public Guid? PrimaryCarePhysicianId { get; set; }
         public ICollection<Guid> MedicalFileIds { get; set; }
         public ICollection<Guid> CurrentMedicationIds { get; set; }
         public ICollection<Guid> InsuranceIds { get; set; }

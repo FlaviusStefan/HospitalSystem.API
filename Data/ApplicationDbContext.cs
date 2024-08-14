@@ -22,8 +22,6 @@ namespace HospitalSystem.API.Data
         public DbSet<Hospital> Hospitals { get; set; }
         public DbSet<LabAnalysis> LabAnalyses { get; set; }
         public DbSet<LabTest> LabTests { get; set; }
-
-        // Add DbSets for relationship entities
         public DbSet<DoctorSpecialization> DoctorSpecializations { get; set; }
         public DbSet<DoctorHospital> DoctorHospitals { get; set; }
 
@@ -51,7 +49,7 @@ namespace HospitalSystem.API.Data
                 .HasMany(a => a.Patients)
                 .WithOne(p => p.Address)
                 .HasForeignKey(p => p.AddressId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Address>()
                 .HasMany(a => a.Hospitals)
@@ -73,7 +71,7 @@ namespace HospitalSystem.API.Data
                 .HasMany(c => c.Patients)
                 .WithOne(p => p.Contact)
                 .HasForeignKey(p => p.ContactId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Contact>()
                 .HasMany(c => c.Hospitals)

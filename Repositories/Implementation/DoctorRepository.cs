@@ -8,23 +8,6 @@ namespace HospitalSystem.API.Repositories.Implementation
     public class DoctorRepository : IDoctorRepository
     {
 
-
-
-        //private readonly ApplicationDbContext dbContext;
-
-        //public DoctorRepository(ApplicationDbContext dbContext)
-        //{
-        //    this.dbContext = dbContext;
-        //}
-
-        //public async Task<Doctor> CreateAsync(Doctor doctor)
-        //{
-        //    await dbContext.Doctors.AddAsync(doctor);
-        //    await dbContext.SaveChangesAsync();
-
-        //    return doctor;
-        //}    
-
         private readonly ApplicationDbContext dbContext;
         private readonly IAddressRepository addressRepository;
         private readonly IContactRepository contactRepository;
@@ -42,31 +25,26 @@ namespace HospitalSystem.API.Repositories.Implementation
             {
                 try
                 {
-                    // Save address first if provided
+                    
                     if (address != null)
                     {
                         address.Id = Guid.NewGuid();
                         await addressRepository.CreateAsync(address);
 
-                        // Now associate the address with the doctor
                         doctor.AddressId = address.Id;
                     }
 
-                    // Save contact next if provided
                     if (contact != null)
                     {
                         contact.Id = Guid.NewGuid();
                         await contactRepository.CreateAsync(contact);
 
-                        // Now associate the contact with the doctor
                         doctor.ContactId = contact.Id;
                     }
 
-                    // Save the doctor last
                     dbContext.Doctors.Add(doctor);
                     await dbContext.SaveChangesAsync();
 
-                    // Commit transaction
                     await transaction.CommitAsync();
 
                     return doctor;
@@ -75,7 +53,6 @@ namespace HospitalSystem.API.Repositories.Implementation
                 {
                     await transaction.RollbackAsync();
 
-                    // Log the exception in detail
                     Console.WriteLine($"Error creating doctor: {ex.Message}");
                     Console.WriteLine($"Stack Trace: {ex.StackTrace}");
 

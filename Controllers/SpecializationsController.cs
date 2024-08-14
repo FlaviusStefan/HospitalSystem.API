@@ -8,11 +8,11 @@ namespace HospitalSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SpecializationController : ControllerBase
+    public class SpecializationsController : ControllerBase
     {
         private readonly ISpecializationRepository specializationRepository;
 
-        public SpecializationController(ISpecializationRepository specializationRepository)
+        public SpecializationsController(ISpecializationRepository specializationRepository)
         {
             this.specializationRepository = specializationRepository;
         }

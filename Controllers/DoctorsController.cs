@@ -10,99 +10,18 @@ namespace HospitalSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctorController : ControllerBase
+    public class DoctorsController : ControllerBase
     {
         private readonly IDoctorRepository doctorRepository;
         private readonly IAddressRepository addressRepository;
         private readonly IContactRepository contactRepository;
 
-        public DoctorController(IDoctorRepository doctorRepository, IAddressRepository addressRepository, IContactRepository contactRepository)
+        public DoctorsController(IDoctorRepository doctorRepository, IAddressRepository addressRepository, IContactRepository contactRepository)
         {
             this.doctorRepository = doctorRepository;
             this.addressRepository = addressRepository;
             this.contactRepository = contactRepository;
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> CreateDoctor(CreateDoctorRequestDto request)
-        //{
-        //    // Create Address entity
-        //    var address = new Address
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Street = request.Address.Street,
-        //        StreetNr = request.Address.StreetNr,
-        //        City = request.Address.City,
-        //        State = request.Address.State,
-        //        Country = request.Address.Country,
-        //        PostalCode = request.Address.PostalCode
-        //    };
-
-        //    // Create Contact entity
-        //    var contact = new Contact
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Phone = request.Contact.Phone,
-        //        Email = request.Contact.Email
-        //    };
-
-        //    // Save Address and Contact to the database
-        //    await addressRepository.CreateAsync(address);
-        //    await contactRepository.CreateAsync(contact);
-
-        //    // Create Doctor entity
-        //    var doctor = new Doctor
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        FirstName = request.FirstName,
-        //        LastName = request.LastName,
-        //        DateOfBirth = request.DateOfBirth,
-        //        Gender = request.Gender,
-        //        LicenseNumber = request.LicenseNumber,
-        //        YearsOfExperience = request.YearsOfExperience,
-        //        AddressId = address.Id,
-        //        ContactId = contact.Id
-        //    };
-
-        //    // Create the DoctorSpecializations relationships
-        //    var doctorSpecializations = request.SpecializationIds.Select(sid => new DoctorSpecialization
-        //    {
-        //        DoctorId = doctor.Id,
-        //        SpecializationId = sid
-        //    }).ToList();
-
-        //    // Set the DoctorSpecializations on the Doctor entity
-        //    doctor.DoctorSpecializations = doctorSpecializations;
-
-        //    var doctorHospitals = request.HospitalIds.Select(hid => new DoctorHospital
-        //    {
-        //        DoctorId = doctor.Id,
-        //        HospitalId = hid
-        //    }).ToList();
-
-        //    doctor.DoctorHospitals = doctorHospitals;
-
-        //    // Save the doctor to the database
-        //    await doctorRepository.CreateAsync(doctor);
-
-        //    // Create the response DTO
-        //    var response = new DoctorDto
-        //    {
-        //        Id = doctor.Id,
-        //        FirstName = doctor.FirstName,
-        //        LastName = doctor.LastName,
-        //        DateOfBirth = doctor.DateOfBirth,
-        //        Gender = doctor.Gender,
-        //        SpecializationIds = request.SpecializationIds,
-        //        HospitalIds = request.HospitalIds,
-        //        LicenseNumber = doctor.LicenseNumber,
-        //        YearsOfExperience = doctor.YearsOfExperience,
-        //        AddressId = doctor.AddressId,
-        //        ContactId = doctor.ContactId
-        //    };
-
-        //    return Ok(response);
-        //}
 
         [HttpPost]
         public async Task<IActionResult> CreateDoctor(CreateDoctorRequestDto request)
