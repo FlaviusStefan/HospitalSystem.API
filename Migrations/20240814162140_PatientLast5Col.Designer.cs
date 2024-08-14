@@ -4,6 +4,7 @@ using HospitalSystem.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HospitalSystem.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240814162140_PatientLast5Col")]
+    partial class PatientLast5Col
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -368,9 +371,6 @@ namespace HospitalSystem.API.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("DoctorId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -386,6 +386,10 @@ namespace HospitalSystem.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("PrimaryCarePhysicianId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<double>("Weight")
                         .HasColumnType("float");
 
@@ -395,7 +399,7 @@ namespace HospitalSystem.API.Migrations
 
                     b.HasIndex("ContactId");
 
-                    b.HasIndex("DoctorId");
+                    b.HasIndex("PrimaryCarePhysicianId");
 
                     b.ToTable("Patients");
                 });
@@ -613,13 +617,17 @@ namespace HospitalSystem.API.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("HospitalSystem.API.Models.Domain.Doctor", null)
+                    b.HasOne("HospitalSystem.API.Models.Domain.Doctor", "PrimaryCarePhysician")
                         .WithMany("Patients")
-                        .HasForeignKey("DoctorId");
+                        .HasForeignKey("PrimaryCarePhysicianId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Address");
 
                     b.Navigation("Contact");
+
+                    b.Navigation("PrimaryCarePhysician");
                 });
 
             modelBuilder.Entity("HospitalSystem.API.Models.Domain.Qualification", b =>

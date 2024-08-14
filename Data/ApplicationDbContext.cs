@@ -128,12 +128,6 @@ namespace HospitalSystem.API.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Doctor>()
-                .HasMany(d => d.Patients)
-                .WithOne(p => p.PrimaryCarePhysician)
-                .HasForeignKey(p => p.PrimaryCarePhysicianId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Doctor>()
                 .HasMany(d => d.Appointments)
                 .WithOne(a => a.Doctor)
                 .HasForeignKey(a => a.DoctorId)
@@ -169,12 +163,6 @@ namespace HospitalSystem.API.Data
                 .HasOne(p => p.Contact)
                 .WithMany(c => c.Patients)
                 .HasForeignKey(p => p.ContactId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Patient>()
-                .HasOne(p => p.PrimaryCarePhysician)
-                .WithMany(d => d.Patients)
-                .HasForeignKey(p => p.PrimaryCarePhysicianId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Patient>()

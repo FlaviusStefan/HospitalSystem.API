@@ -13,13 +13,11 @@
         public Address Address { get; set; }
         public Guid ContactId { get; set; }
         public Contact Contact { get; set; }
-        public Guid? PrimaryCarePhysicianId { get; set; }
-        public Doctor PrimaryCarePhysician { get; set; }
-        public ICollection<MedicalFile> MedicalFiles { get; set; }
-        public ICollection<Medication> CurrentMedications { get; set; }
-        public ICollection<Insurance> Insurances{ get; set; }
-        public ICollection<Appointment> Appointments { get; set; }
-        public ICollection<LabAnalysis> LabAnalyses { get; set; }
+        public ICollection<MedicalFile> MedicalFiles { get; set; } = new List<MedicalFile>();
+        public ICollection<Medication> CurrentMedications { get; set; } = new List<Medication>();
+        public ICollection<Insurance> Insurances { get; set; } = new List<Insurance>();
+        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+        public ICollection<LabAnalysis> LabAnalyses { get; set; } = new List<LabAnalysis>();
 
     }
 }

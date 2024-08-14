@@ -2,6 +2,7 @@
 using HospitalSystem.API.Models.Domain;
 using HospitalSystem.API.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using System.Data.SqlTypes;
 
 namespace HospitalSystem.API.Repositories.Implementation
 {
@@ -76,7 +77,6 @@ namespace HospitalSystem.API.Repositories.Implementation
             return await dbContext.Patients
                 .Include(p => p.Address)
                 .Include(p => p.Contact)
-                .Include(p => p.PrimaryCarePhysician)
                 .Include(p => p.MedicalFiles)
                 .Include(p => p.CurrentMedications)
                 .Include(p => p.Insurances)
@@ -85,12 +85,12 @@ namespace HospitalSystem.API.Repositories.Implementation
                 .ToListAsync();
         }
 
+
         public async Task<Patient?> GetById(Guid id)
         {
             return await dbContext.Patients
                 .Include(p => p.Address)
                 .Include(p => p.Contact)
-                .Include(p => p.PrimaryCarePhysician)
                 .Include(p => p.MedicalFiles)
                 .Include(p => p.CurrentMedications)
                 .Include(p => p.Insurances)
@@ -118,7 +118,6 @@ namespace HospitalSystem.API.Repositories.Implementation
             var existingPatient = await dbContext.Patients
                 .Include(p => p.Address)
                 .Include(p => p.Contact)
-                .Include(p => p.PrimaryCarePhysicianId)
                 .Include(p => p.MedicalFiles)
                 .Include(p => p.CurrentMedications)
                 .Include(p => p.Insurances)
