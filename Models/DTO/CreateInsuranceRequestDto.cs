@@ -1,8 +1,7 @@
 ﻿namespace HospitalSystem.API.Models.DTO
 {
-    public class InsuranceDto
+    public class CreateInsuranceRequestDto
     {
-        public Guid Id { get; set; }
         public string Provider { get; set; }
         public string PolicyNumber { get; set; }
         public DateTime CoverageStartDate { get; set; }
