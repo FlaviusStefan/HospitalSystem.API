@@ -96,7 +96,7 @@ namespace HospitalSystem.API.Repositories.Implementation
                 .Include(p => p.Insurances)
                 .Include(p => p.Appointments)
                 .Include(p => p.LabAnalyses)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Patient?> UpdateAsync(Patient patient)
