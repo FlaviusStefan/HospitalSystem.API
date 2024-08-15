@@ -150,8 +150,7 @@ namespace HospitalSystem.API.Controllers
                 SpecializationIds = doctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = doctor.Qualifications.Select(q => q.Id).ToList(),
                 HospitalIds = doctor.DoctorHospitals.Select(dh => dh.HospitalId).ToList(),
-                AppointmentIds = doctor.Appointments.Select(a => a.Id).ToList(),
-                PatientIds = doctor.Patients.Select(p => p.Id).ToList()
+                AppointmentIds = doctor.Appointments.Select(a => a.Id).ToList()
 
             }).ToList();
 
@@ -183,8 +182,7 @@ namespace HospitalSystem.API.Controllers
                 SpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = existingDoctor.Qualifications.Select(ds => ds.Id).ToList(),
                 HospitalIds = existingDoctor.DoctorHospitals.Select(dh => dh.HospitalId).ToList(),
-                AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList(),
-                PatientIds = existingDoctor.Patients.Select(p => p.Id).ToList()
+                AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList()
 
             };
 
@@ -333,35 +331,6 @@ namespace HospitalSystem.API.Controllers
                 }
             }
 
-            // Update patients
-            var existingPatientIds = existingDoctor.Patients.Select(p => p.Id).ToList();
-            var newPatientIds = request.PatientIds ?? new List<Guid>();
-
-            // Remove patients that are no longer in the request
-            foreach (var existingPatientId in existingPatientIds)
-            {
-                if (!newPatientIds.Contains(existingPatientId))
-                {
-                    var patientToRemove = existingDoctor.Patients
-                        .FirstOrDefault(p => p.Id == existingPatientId);
-                    if (patientToRemove != null)
-                    {
-                        existingDoctor.Patients.Remove(patientToRemove);
-                    }
-                }
-            }
-
-            // Add new patients
-            foreach (var patientId in newPatientIds)
-            {
-                if (!existingPatientIds.Contains(patientId))
-                {
-                    existingDoctor.Patients.Add(new Patient
-                    {
-                        Id = patientId
-                    });
-                }
-            }
             
 
             // Update the doctor in the repository
@@ -378,8 +347,7 @@ namespace HospitalSystem.API.Controllers
                 SpecializationIds = existingDoctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = existingDoctor.Qualifications.Select(q => q.Id).ToList(),
                 HospitalIds = existingDoctor.DoctorHospitals.Select(dh => dh.HospitalId).ToList(),
-                AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList(),
-                PatientIds = existingDoctor.Patients.Select(p => p.Id).ToList()
+                AppointmentIds = existingDoctor.Appointments.Select(a => a.Id).ToList()
             };
 
             return Ok(response);
@@ -410,8 +378,7 @@ namespace HospitalSystem.API.Controllers
                 SpecializationIds = doctor.DoctorSpecializations.Select(ds => ds.SpecializationId).ToList(),
                 QualificationIds = doctor.Qualifications.Select(q => q.Id).ToList(),
                 HospitalIds = doctor.DoctorHospitals.Select(dh => dh.HospitalId).ToList(),
-                AppointmentIds = doctor.Appointments.Select(a => a.Id).ToList(),
-                PatientIds = doctor.Patients.Select(p => p.Id).ToList()
+                AppointmentIds = doctor.Appointments.Select(a => a.Id).ToList()
             };
 
             return Ok(response);

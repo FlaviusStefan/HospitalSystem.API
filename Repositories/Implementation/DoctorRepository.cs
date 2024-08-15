@@ -79,7 +79,6 @@ namespace HospitalSystem.API.Repositories.Implementation
                 .Include(d => d.Qualifications)
                 .Include(d => d.DoctorHospitals)
                 .Include(d => d.Appointments)
-                .Include(d => d.Patients)
                 .ToListAsync();
 
         }
@@ -93,7 +92,6 @@ namespace HospitalSystem.API.Repositories.Implementation
                 .Include(d => d.Qualifications)
                 .Include(d => d.DoctorHospitals)
                 .Include(d => d.Appointments)
-                .Include(d => d.Patients)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -122,7 +120,6 @@ namespace HospitalSystem.API.Repositories.Implementation
                 .Include(d => d.Qualifications)
                 .Include(d => d.DoctorHospitals)
                 .Include(d => d.Appointments)
-                .Include(d => d.Patients)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (existingDoctor is null)

@@ -17,6 +17,5 @@ namespace HospitalSystem.API.Models.DTO
         public ICollection<Guid> QualificationIds { get; set; }
         public ICollection<Guid> HospitalIds { get; set; }
         public ICollection<Guid> AppointmentIds { get; set; }
-        public ICollection<Guid> PatientIds { get; set; }
     }
 }
