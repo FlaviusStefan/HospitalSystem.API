@@ -2,7 +2,7 @@
 
 namespace HospitalSystem.API.Models.DTO
 {
-    public class CreateMedicaltFileRequestDto
+    public class CreateMedicalFileRequestDto
     {
         public Guid PatientId { get; set; }
         public string FileName { get; set; }

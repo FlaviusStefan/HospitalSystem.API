@@ -1,6 +1,7 @@
 ﻿using HospitalSystem.API.Data;
 using HospitalSystem.API.Models.Domain;
 using HospitalSystem.API.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace HospitalSystem.API.Repositories.Implementation
 {
@@ -19,24 +20,52 @@ namespace HospitalSystem.API.Repositories.Implementation
             return medicalFile;
         }
 
-        public Task<IEnumerable<MedicalFile>> GetAllAsync()
+        public async Task<IEnumerable<MedicalFile>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await dbContext.MedicalFiles.ToListAsync();
         }
 
-        public Task<MedicalFile?> GetById(Guid id)
+        public async Task<MedicalFile?> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            return await dbContext.MedicalFiles.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<MedicalFile?> UpdateAsync(MedicalFile medicalFile)
+        public async Task<MedicalFile?> UpdateAsync(MedicalFile medicalFile)
         {
-            throw new NotImplementedException();
+            var existingMedicalFile = await dbContext.MedicalFiles.FirstOrDefaultAsync(x => x.Id == medicalFile.Id);
+
+            if (existingMedicalFile != null)
+            {
+                var patientExists = await dbContext.Patients.AnyAsync(p => p.Id == medicalFile.PatientId);
+                if (!patientExists)
+                {
+                    throw new InvalidOperationException($"Patient with Id {medicalFile.PatientId} does not exist.");
+                }
+
+                existingMedicalFile.FileName = medicalFile.FileName;
+                existingMedicalFile.FilePath = medicalFile.FilePath;
+                existingMedicalFile.FileType = medicalFile.FileType;
+                existingMedicalFile.PatientId = medicalFile.PatientId;
+
+                await dbContext.SaveChangesAsync();
+                return existingMedicalFile;
+            }
+
+            return null;
         }
 
-        public Task<MedicalFile?> DeleteAsync(Guid id)
+        public async Task<MedicalFile?> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var existingMedicalFile = await dbContext.MedicalFiles.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (existingMedicalFile is null)
+            {
+                return null;
+            }
+
+            dbContext.MedicalFiles.Remove(existingMedicalFile);
+            await dbContext.SaveChangesAsync();
+            return existingMedicalFile;
         }
     }
 }
