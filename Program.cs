@@ -28,6 +28,7 @@ builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
 builder.Services.AddScoped<IMedicalFileRepository, MedicalFileRepository>();
 builder.Services.AddScoped<IInsuranceRepository, InsuranceRepository>();
 builder.Services.AddScoped<ILabAnalysisRepository, LabAnalysisRepository>();
+builder.Services.AddScoped<ILabTestRepository, LabTestRepository>();
 
 
 

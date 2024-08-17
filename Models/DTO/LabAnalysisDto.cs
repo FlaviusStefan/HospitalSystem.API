@@ -7,6 +7,6 @@
         public PatientDto Patient { get; set; }
         public DateTime AnalysisDate { get; set; }
         public string AnalysisType { get; set; }
-        public ICollection<LabTestDto> LabTests { get; set; }
+        public ICollection<Guid> LabTestIds { get; set; }
     }
 }

@@ -37,7 +37,7 @@ namespace HospitalSystem.API.Repositories.Implementation
 
             if(existingMedication != null)
             {
-                var patientExists = await dbContext.Medications.AnyAsync(p => p.Id == medication.PatientId);
+                var patientExists = await dbContext.Patients.AnyAsync(p => p.Id == medication.PatientId);
                 if(!patientExists)
                 {
                     throw new InvalidOperationException($"Patient with Id {medication.PatientId} does not exist.");

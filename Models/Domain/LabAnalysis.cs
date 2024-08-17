@@ -7,6 +7,6 @@
         public Patient Patient { get; set; }
         public DateTime AnalysisDate { get; set; }
         public string AnalysisType { get; set; }
-        public ICollection<LabTest> LabTests { get; set; }
+        public ICollection<LabTest> LabTests { get; set; } = new List<LabTest>();
     }
 }

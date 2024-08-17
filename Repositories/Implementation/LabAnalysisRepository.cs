@@ -1,33 +1,65 @@
-﻿using HospitalSystem.API.Models.Domain;
+﻿using HospitalSystem.API.Data;
+using HospitalSystem.API.Models.Domain;
 using HospitalSystem.API.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace HospitalSystem.API.Repositories.Implementation
 {
     public class LabAnalysisRepository : ILabAnalysisRepository
     {
-        public Task<LabAnalysis> CreateAsync(LabAnalysis labAnalysis)
-        {
-            throw new NotImplementedException();
-        }
+        private readonly ApplicationDbContext dbContext;
 
-        public Task<LabAnalysis?> DeleteAsync(Guid id)
+        public LabAnalysisRepository(ApplicationDbContext dbContext)
         {
-            throw new NotImplementedException();
+            this.dbContext = dbContext;
         }
-
-        public Task<IEnumerable<LabAnalysis>> GetAllAsync()
+        public async Task<LabAnalysis> CreateAsync(LabAnalysis labAnalysis)
         {
-            throw new NotImplementedException();
+            await dbContext.LabAnalyses.AddAsync(labAnalysis);
+            await dbContext.SaveChangesAsync();
+            return labAnalysis;
         }
-
-        public Task<LabAnalysis?> GetById(Guid id)
+        public async Task<IEnumerable<LabAnalysis>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await dbContext.LabAnalyses.ToListAsync();
         }
-
-        public Task<LabAnalysis?> UpdateAsync(LabAnalysis labAnalysis)
+        public async Task<LabAnalysis?> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            return await dbContext.LabAnalyses.FirstOrDefaultAsync();
+        }
+        public async Task<LabAnalysis?> UpdateAsync(LabAnalysis labAnalysis)
+        {
+            var existingLabAnalysis = await dbContext.LabAnalyses.FirstOrDefaultAsync(x => x.Id == labAnalysis.Id);
+
+            if (existingLabAnalysis != null)
+            {
+                var patientExists = await dbContext.Patients.AnyAsync(p => p.Id == labAnalysis.PatientId);
+                if (!patientExists)
+                {
+                    throw new InvalidOperationException($"Patient with Id {labAnalysis.PatientId} does not exist.");
+                }
+
+                existingLabAnalysis.AnalysisType = labAnalysis.AnalysisType;
+                existingLabAnalysis.PatientId = labAnalysis.PatientId;
+
+                await dbContext.SaveChangesAsync();
+                return existingLabAnalysis;
+            }
+
+            return null;
+        }
+        public async Task<LabAnalysis?> DeleteAsync(Guid id)
+        {
+            var existingLabAnalysis = await dbContext.LabAnalyses.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (existingLabAnalysis is null)
+            {
+                return null;
+            }
+
+            dbContext.LabAnalyses.Remove(existingLabAnalysis);
+            await dbContext.SaveChangesAsync();
+            return existingLabAnalysis;
         }
     }
 }
