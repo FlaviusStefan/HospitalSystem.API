@@ -71,57 +71,45 @@ namespace HospitalSystem.API.Controllers
             return Ok(appointmentDto);
         }
 
-        //[HttpPut]
-        //[Route("{id:Guid}")]
-        //public async Task<IActionResult> UpdateAppointment([FromRoute] Guid id, UpdateAppointmentRequestDto request)
-        //{
-        //    // Validate the DoctorId and PatientId using repositories
-        //    var doctor = await doctorRepository.GetById(request.DoctorId);
-        //    if (doctor == null)
-        //    {
-        //        return BadRequest("Invalid DoctorId");
-        //    }
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateAppointment([FromRoute] Guid id, UpdateAppointmentRequestDto request)
+        {
+            // Retrieve the existing appointment from the database
+            var existingAppointment = await appointmentRepository.GetById(id);
 
-        //    var patient = await patientRepository.GetById(request.PatientId);
-        //    if (patient == null)
-        //    {
-        //        return BadRequest("Invalid PatientId");
-        //    }
+            if (existingAppointment == null)
+            {
+                return NotFound();
+            }
 
-        //    var appointment = await appointmentRepository.GetById(id);
-        //    if (appointment == null)
-        //    {
-        //        return NotFound();
-        //    }
+            // Update only the allowed fields
+            existingAppointment.DateTime = request.AppointmentDateTime;
+            existingAppointment.Status = request.Status;
+            existingAppointment.Reason = request.Reason;
+            existingAppointment.Details = request.Details;
 
-        //    // Update the appointment properties
-        //    appointment.DoctorId = request.DoctorId;
-        //    appointment.PatientId = request.PatientId;
-        //    appointment.DateTime = request.AppointmentDateTime;
-        //    appointment.Status = request.Status;
-        //    appointment.Reason = request.Reason;
-        //    appointment.Details = request.Details;
+            // Save the changes
+            await appointmentRepository.UpdateAsync(existingAppointment);
 
-        //    await appointmentRepository.UpdateAsync(appointment);
+            var response = await MapAppointmentToDto(existingAppointment);
+            return Ok(response);
+        }
 
-        //    var response = await MapAppointmentToDto(appointment);
-        //    return Ok(response);
-        //}
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteAppointment([FromRoute] Guid id)
+        {
+            var appointment = await appointmentRepository.DeleteAsync(id);
 
-        //[HttpDelete]
-        //[Route("{id:Guid}")]
-        //public async Task<IActionResult> DeleteAppointment([FromRoute] Guid id)
-        //{
-        //    var appointment = await appointmentRepository.DeleteAsync(id);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
 
-        //    if (appointment == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var response = await MapAppointmentToDto(appointment);
-        //    return Ok(response);
-        //}
+            var response = await MapAppointmentToDto(appointment);
+            return Ok(response);
+        }
 
         private async Task<AppointmentDto> MapAppointmentToDto(Appointment appointment)
         {

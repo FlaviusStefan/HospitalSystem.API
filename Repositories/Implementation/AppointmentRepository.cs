@@ -42,13 +42,20 @@ namespace HospitalSystem.API.Repositories.Implementation
 
             if (existingAppointment != null)
             {
-                dbContext.Entry(existingAppointment).CurrentValues.SetValues(appointment);
+                // Update only the allowed fields
+                existingAppointment.DateTime = appointment.DateTime;
+                existingAppointment.Status = appointment.Status;
+                existingAppointment.Reason = appointment.Reason;
+                existingAppointment.Details = appointment.Details;
+
+                // Save changes
                 await dbContext.SaveChangesAsync();
-                return appointment;
+                return existingAppointment;
             }
 
             return null;
         }
+
         public async Task<Appointment?> DeleteAsync(Guid id)
         {
             var existingAppointment = await dbContext.Appointments.FirstOrDefaultAsync(x => x.Id == id);
