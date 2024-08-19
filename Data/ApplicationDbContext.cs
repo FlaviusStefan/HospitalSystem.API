@@ -263,13 +263,13 @@ namespace HospitalSystem.API.Data
                 .HasOne(la => la.Patient)
                 .WithMany(p => p.LabAnalyses)
                 .HasForeignKey(la => la.PatientId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<LabAnalysis>()
                 .HasMany(la => la.LabTests)
                 .WithOne(lt => lt.LabAnalysis)
                 .HasForeignKey(lt => lt.LabAnalysisId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Configuration for LabTest entity
             modelBuilder.Entity<LabTest>()
@@ -279,7 +279,7 @@ namespace HospitalSystem.API.Data
                 .HasOne(lt => lt.LabAnalysis)
                 .WithMany(la => la.LabTests)
                 .HasForeignKey(lt => lt.LabAnalysisId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 

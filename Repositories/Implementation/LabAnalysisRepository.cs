@@ -21,11 +21,15 @@ namespace HospitalSystem.API.Repositories.Implementation
         }
         public async Task<IEnumerable<LabAnalysis>> GetAllAsync()
         {
-            return await dbContext.LabAnalyses.ToListAsync();
+            return await dbContext.LabAnalyses
+                .Include(la => la.LabTests)
+                .ToListAsync();
         }
         public async Task<LabAnalysis?> GetById(Guid id)
         {
-            return await dbContext.LabAnalyses.FirstOrDefaultAsync();
+            return await dbContext.LabAnalyses
+                .Include(la => la.LabTests)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
         public async Task<LabAnalysis?> UpdateAsync(LabAnalysis labAnalysis)
         {
@@ -39,18 +43,20 @@ namespace HospitalSystem.API.Repositories.Implementation
                     throw new InvalidOperationException($"Patient with Id {labAnalysis.PatientId} does not exist.");
                 }
 
+                existingLabAnalysis.AnalysisDate = labAnalysis.AnalysisDate;
                 existingLabAnalysis.AnalysisType = labAnalysis.AnalysisType;
-                existingLabAnalysis.PatientId = labAnalysis.PatientId;
 
                 await dbContext.SaveChangesAsync();
                 return existingLabAnalysis;
             }
 
             return null;
+
         }
+
         public async Task<LabAnalysis?> DeleteAsync(Guid id)
         {
-            var existingLabAnalysis = await dbContext.LabAnalyses.FirstOrDefaultAsync(x => x.Id == id);
+            var existingLabAnalysis = await dbContext.LabAnalyses.Include(la => la.LabTests).FirstOrDefaultAsync(x => x.Id == id);
 
             if (existingLabAnalysis is null)
             {

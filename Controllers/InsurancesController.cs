@@ -1,8 +1,6 @@
 ﻿using HospitalSystem.API.Models.Domain;
 using HospitalSystem.API.Models.DTO;
-using HospitalSystem.API.Repositories.Implementation;
 using HospitalSystem.API.Repositories.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalSystem.API.Controllers
